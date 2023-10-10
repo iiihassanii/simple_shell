@@ -7,32 +7,42 @@
  * Return: 0 on success
  */
 
+
 int main(int argc, char **argv)
 {
-	char *line;
+	char *line = NULL;
 	size_t n = 0;
+	int interactive_mode = isatty(STDIN_FILENO);
+	char *new_line;
+	ssize_t read;
+	struct Node* head;
 
 	(void)argc;
-	(void)argv;/* declaring void variables */
+	(void)argv;
 
+	head = NULL;
 	while (1)
 	{
-		/*print prompt*/
-		printf("$ ");
-		/*get line int arg line */
-		if (getline(&line, &n, stdin) == -1)
+		if (interactive_mode)
+			printf("$ ");
+		read = getline(&line, &n, stdin);
+		head = add_node(NULL,line);
+		if (read == -1)
 		{
-			/* free up allocated memory */
+			/* Free allocated memory*/
 			free(line);
 			exit(0);
 		}
-		/* Remove nl and # */
+		/* Remove comments and newlines*/
 		rm_comment(line);
-		rm_newline(line);
-		execute(line);
-		/*char* argv[] = {line, NULL};*/
-		/*execve(line,argv,NULL);*/
-		
+		new_line = malloc(_strlen(line) + 1);
+		add_node(&head, new_line);
+		new_line = line;
+		rm_newline(new_line);
+
+		if (line[0] != '\0')
+			execute(new_line, head);
 	}
+	free(head);
 	return (0);
 }

@@ -1,6 +1,30 @@
 #include "main.h"
 
 /**
+ * _getenv - get env
+ * @name: path name
+ * Return: void
+ */
+
+char *_getenv(char *name)
+{
+	size_t name_length = _strlen(name);
+	int i;
+
+	for (i = 0; environ[i] != NULL; i++)
+	{
+		if (strncmp(environ[i], name, name_length) == 0
+				&& environ[i][name_length] == '=')
+		{
+			/* Return a pointer to the value part of the environment variable*/
+			return (environ[i] + name_length + 1);
+		}
+	}
+
+	return (NULL);
+}
+
+/**
  * _strlen - returns the length of a string.
  * @s: the string
  * Return: len
@@ -38,20 +62,22 @@ char *_strcpy(char *dest, char *src)
 }
 
 /**
- * pwd - Current working directory
- * Return: void
+ * _strchr - locates a character in a string.
+ * @s:string
+ * @c:first occurrence of the character
+ * Return: c
  */
 
-void pwd(void)
+char *_strchr(char *s, char c)
 {
-	char path[256];
+	int i;
 
-	if (getcwd(path, sizeof(path)) != NULL)
+	for (i = 0; s[i] != c; i++)
 	{
-		printf("%s\n", path);
+		if (s[i] == '\0')
+			return (NULL);
 	}
-	else
-	{
-		perror("getcwd");
-	}
+	return (s + i);
 }
+
+
