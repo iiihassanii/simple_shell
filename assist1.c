@@ -36,3 +36,22 @@ char *_strcpy(char *dest, char *src)
 	} while (src[i] != '\0');
 	return (dest);
 }
+
+/**
+ * pwd - Current working directory
+ * Return: void
+ */
+
+void pwd(void)
+{
+	char path[256];
+
+	if (getcwd(path, sizeof(path)) != NULL)
+	{
+		printf("%s\n", path);
+	}
+	else
+	{
+		perror("getcwd");
+	}
+}
