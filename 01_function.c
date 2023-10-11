@@ -38,7 +38,8 @@ void rm_newline(char *line)
 		i++;
 	}
 }
-/*
+
+/**
  * gettoken - delimiter and stores the tokens
  * @line: command line
  * @cp_line: copy of command line
@@ -46,7 +47,7 @@ void rm_newline(char *line)
  */
 
 
-char **gettoken(char *line, char *cp_line)
+char **gettoken(char *line, char *cp_line, list_t *head)
 {
 	char **argv; /*arrey of pointer to tokens*/
 	char *token;
@@ -68,15 +69,55 @@ char **gettoken(char *line, char *cp_line)
 	token = strtok(cp_line, delim);
 	for (i = 0; token != NULL; i++)
 	{
-		argv[i] = malloc(sizeof(char) * strlen(token) + 1);
+		argv[i] = malloc(sizeof(char) * _strlen(token) + 1);
+		add_node(&head,argv[i]);
 		_strcpy(argv[i], token);
 		token = strtok(NULL, delim);
 	}
 	argv[i] = NULL;
-	/*last one is NULL
-	 * why?execve need last one to be null*/
+	/*last one is NULL why?execve need last one to be null*/
 	return (argv);
 }
+
+/**
+ * handle_path - find the correct bath
+ * @command: the command
+ * @path: all env path
+ * Retuirn: void
+ */
+
+void handle_path(char *command, char *path, list_t *head)
+{
+	char *token;
+	char *full_path = NULL;
+	const char *delim = ":";
+	size_t command_len;
+	size_t token_len;
+
+	token = strtok(path, delim);
+	while (token != NULL)
+	{
+		token_len = _strlen(token);
+		command_len = _strlen(command);
+		full_path = malloc(token_len + command_len + 2);
+		add_node(&head, full_path);
+
+		_strcpy(full_path, token);
+		full_path[token_len] = '/';
+		_strcpy(full_path + token_len + 1, command);
+
+		if (access(full_path, X_OK) == 0)
+		{
+			_strcpy(command, full_path);
+			/*free(full_path);*/
+			return;
+		}
+
+		/*free(full_path);*/
+		token = strtok(NULL, delim);
+	}
+}
+
 
 /**
  * execute - command ->
@@ -84,23 +125,30 @@ char **gettoken(char *line, char *cp_line)
  * Return: void
  */
 
-/*
-void execute(char *line)
+void execute(char *line, list_t *head)
 {
 	int status;
 	char **argv;
 	pid_t pid = fork();
-	char *cp_line = malloc(_strlen(line) + 1);
+	char *cp_line = malloc(strlen(line) + 1);
+	add_node(&head, cp_line);
 
-	cp_line = _strcpy(cp_line, line);
-	argv = gettoken(line, cp_line);
+	_strcpy(cp_line, line);
+	argv = gettoken(line, cp_line, head);
 
 	if (pid == -1)
 		exit(EXIT_FAILURE);
 	else if (pid == 0)
 	{
-		
+
+		if (_strchr(argv[0], '/') == NULL)
+		{
+
+			char *path = _getenv("PATH");
+			handle_path(argv[0], path, head);
+		}
 		execve(argv[0], argv, NULL);
+		free(cp_line);
 		perror("execve");
 		exit(EXIT_FAILURE);
 	}
@@ -108,61 +156,4 @@ void execute(char *line)
 	{
 		waitpid(pid, &status, 0);
 	}
-}*/
-
-
-void handle_path(char *command, char *path)
-{
-    char *token;
-    char *full_path = NULL;
-    const char *delim = ":";
-
-    token = strtok(path, delim);
-    while (token != NULL)
-    {
-        full_path = malloc(strlen(token) + strlen(command) + 2);
-        sprintf(full_path, "%s/%s", token, command);
-
-        if (access(full_path, X_OK) == 0)
-        {
-            strcpy(command, full_path);
-            free(full_path);
-            return;
-        }
-
-        free(full_path);
-        token = strtok(NULL, delim);
-    }
-}
-
-void execute(char *line)
-{
-    int status;
-    char **argv;
-    pid_t pid = fork();
-    char *cp_line = malloc(strlen(line) + 1);
-
-    cp_line = _strcpy(cp_line, line);
-    argv = gettoken(line, cp_line);
-
-    if (pid == -1)
-        exit(EXIT_FAILURE);
-    else if (pid == 0)
-    {
-        
-        if (strchr(argv[0], '/') == NULL)
-        {
-            
-            char *path = getenv("PATH");
-            handle_path(argv[0], path);
-        }
-
-        execve(argv[0], argv, NULL);
-        perror("execve");
-        exit(EXIT_FAILURE);
-    }
-    else
-    {
-        waitpid(pid, &status, 0);
-    }
 }
