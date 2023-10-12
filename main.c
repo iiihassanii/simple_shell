@@ -7,12 +7,14 @@
  * Return: 0 on success
  */
 
+
 int main(int argc, char **argv)
 {
-	char *line;
-	char *new_line;
+	char *line = NULL;
 	size_t n = 0;
 	int interactive_mode = isatty(STDIN_FILENO);
+	char *new_line;
+	/*ssize_t read;*/
 
 	(void)argc;
 	(void)argv;
@@ -20,27 +22,23 @@ int main(int argc, char **argv)
 	while (1)
 	{
 		if (interactive_mode)
-		{
-			/*printf */
 			printf("$ ");
-			/*get line int arg line */
-			if (getline(&line, &n, stdin) == -1)
-			{
-				/* free up allocated memory */
-				free(line);
-				exit(0);
-			}
-			/* Remove nl and # */
-			rm_comment(line);
-			/* make fixed command without any comments*/
-			new_line = malloc(_strlen(line) + 1);
-			new_line = line;
-			rm_newline(new_line);
-			if (line[0] != '\0')
-				execute(new_line);
+		if (getline(&line, &n, stdin) != -1)
+		{
+			
+			free(line);
+			exit(0);
 		}
-		else
-			break;
+		/* Remove comments and newlines*/
+		rm_comment(line);
+		new_line = malloc(_strlen(line) + 1);
+		_strcpy(new_line, line);
+		rm_newline(new_line);
+
+		if (line[0] != '\0')
+			execute(new_line);
 	}
+	free(line);
+	free(new_line);
 	return (0);
 }

@@ -47,7 +47,7 @@ void rm_newline(char *line)
  */
 
 
-char **gettoken(char *line, char *cp_line, list_t *head)
+char **gettoken(char *line, char *cp_line)
 {
 	char **argv; /*arrey of pointer to tokens*/
 	char *token;
@@ -70,7 +70,6 @@ char **gettoken(char *line, char *cp_line, list_t *head)
 	for (i = 0; token != NULL; i++)
 	{
 		argv[i] = malloc(sizeof(char) * _strlen(token) + 1);
-		add_node(&head,argv[i]);
 		_strcpy(argv[i], token);
 		token = strtok(NULL, delim);
 	}
@@ -86,7 +85,7 @@ char **gettoken(char *line, char *cp_line, list_t *head)
  * Retuirn: void
  */
 
-void handle_path(char *command, char *path, list_t *head)
+void handle_path(char *command, char *path)
 {
 	char *token;
 	char *full_path = NULL;
@@ -100,7 +99,6 @@ void handle_path(char *command, char *path, list_t *head)
 		token_len = _strlen(token);
 		command_len = _strlen(command);
 		full_path = malloc(token_len + command_len + 2);
-		add_node(&head, full_path);
 
 		_strcpy(full_path, token);
 		full_path[token_len] = '/';
@@ -116,6 +114,7 @@ void handle_path(char *command, char *path, list_t *head)
 		/*free(full_path);*/
 		token = strtok(NULL, delim);
 	}
+	free(full_path);
 }
 
 
@@ -125,16 +124,16 @@ void handle_path(char *command, char *path, list_t *head)
  * Return: void
  */
 
-void execute(char *line, list_t *head)
+void execute(char *line)
 {
 	int status;
 	char **argv;
 	pid_t pid = fork();
-	char *cp_line = malloc(strlen(line) + 1);
-	add_node(&head, cp_line);
+	int i = 0;
+	char *cp_line = malloc(_strlen(line) + 1);
 
 	_strcpy(cp_line, line);
-	argv = gettoken(line, cp_line, head);
+	argv = gettoken(line, cp_line);
 
 	if (pid == -1)
 		exit(EXIT_FAILURE);
@@ -145,15 +144,39 @@ void execute(char *line, list_t *head)
 		{
 
 			char *path = _getenv("PATH");
-			handle_path(argv[0], path, head);
+			handle_path(argv[0], path);
 		}
 		execve(argv[0], argv, NULL);
-		free(cp_line);
 		perror("execve");
 		exit(EXIT_FAILURE);
 	}
 	else
 	{
-		waitpid(pid, &status, 0);
+		if (waitpid(pid, &status, 0) > 0) 
+		{
+			if (WIFEXITED(status) && !WEXITSTATUS(status)) 
+				printf("Program exited successfully.\n");
+			else if (WIFEXITED(status) && WEXITSTATUS(status)) 
+			{
+				if (WEXITSTATUS(status) == 127) 
+				{
+					printf("execv failed\n");
+				}
+				else 
+					printf("Program terminated normally, but returned a non-zero status.\n");                
+			}
+			else 
+				printf("Program didn't terminate normally.\n");            
+		} 
+		else 
+		{
+			printf("waitpid() failed\n");
+		}
 	}
+	while (*argv != NULL)
+	{
+		free(argv[i]);
+	}
+	free(argv);
+	free(cp_line);
 }
