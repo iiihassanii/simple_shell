@@ -12,9 +12,10 @@
 
 extern char **environ;
 
+void gettoken(char *line);
 void rm_comment(char *command1);
 void rm_newline(char *line);
-void execute(char *line);
+void execute(char **arr);
 char *_getenv(char *name);
 int _strlen(char *s);
 char *_strcpy(char *dest, char *src);
