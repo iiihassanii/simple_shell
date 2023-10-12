@@ -10,11 +10,10 @@
 
 int main(int argc, char **argv)
 {
-	char *line = NULL;
-	size_t n = 0;
+	char *line = NULL, *new_line = NULL;
+	size_t n = 0;/* i = 0;*/
 	int interactive_mode = isatty(STDIN_FILENO);
-	char *new_line;
-	/*ssize_t read;*/
+	ssize_t read;
 
 	(void)argc;
 	(void)argv;
@@ -23,9 +22,10 @@ int main(int argc, char **argv)
 	{
 		if (interactive_mode)
 			printf("$ ");
-		if (getline(&line, &n, stdin) != -1)
+		read = getline(&line, &n, stdin);
+		if (read == -1)
 		{
-			
+			/* Free allocated memory*/
 			free(line);
 			exit(0);
 		}
@@ -35,10 +35,8 @@ int main(int argc, char **argv)
 		_strcpy(new_line, line);
 		rm_newline(new_line);
 
-		if (line[0] != '\0')
-			execute(new_line);
+		gettoken(new_line);
+		free(new_line);
 	}
-	free(line);
-	free(new_line);
 	return (0);
 }
