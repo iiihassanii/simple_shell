@@ -153,7 +153,6 @@ void execute(char **arr)
 		}
 		execve(arr[0], arr, NULL);
 		perror("execve");
-		exit(EXIT_FAILURE);
 	}
 	else
 	{
