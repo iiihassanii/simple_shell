@@ -4,7 +4,7 @@
 
 void is_exit(char *line)
 {
-	if(_strcmp(line, "exit") == 0)
+	if(_strcmp(line, "exit"))
 	{
 		free(line);
 		exit (0);
