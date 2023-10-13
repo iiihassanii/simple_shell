@@ -1,52 +1,27 @@
 #include "main.h"
 
 /**
- * my_strncmp - Compare two specified number of characters
- * @str1: first string
- * @str2: second string
- * @n: maximum number of characters to compare
- * Return: Negative if str1 < str2, positive if str1 > str2
+ * _getenv - get env
+ * @name: path name
+ * Return: void
  */
 
-int _strncmp(const char *str1, const char *str2, size_t n)
+char *_getenv(char *name)
 {
-    while (n > 0 && (*str1 || *str2))
-    {
-        if (*str1 != *str2)
-            return (*str1 - *str2);
+	size_t name_length = _strlen(name);
+	int i;
 
-        str1++;
-        str2++;
-        n--;
-    }
-
-    return 0;
-}
-
-
-/**
- * _strcmp - function that compares two strings.
- *@s1: pointer for the number
- *@s2: idk
- * Return: s1
- */
-
-int _strcmp(char *s1, char *s2)
-{
-	int eq;
-
-	eq = 0;
-	while (*s1)
+	for (i = 0; environ[i] != NULL; i++)
 	{
-		if (*s1 != *s2)
+		if (strncmp(environ[i], name, name_length) == 0
+				&& environ[i][name_length] == '=')
 		{
-			eq = ((int)*s1 - 48) - ((int)*s2 - 48);
-			break;
+			/* Return a pointer to the value part of the environment variable*/
+			return (environ[i] + name_length + 1);
 		}
-		s1++;
-		s2++;
 	}
-	return (eq);
+
+	return (NULL);
 }
 
 /**

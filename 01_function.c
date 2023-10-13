@@ -8,8 +8,8 @@
 
 void rm_comment(char *command)
 {
-	int i = 0;
 
+	int i = 0;
 	if (command[i] == '#')
 		(command[i]) = '\0';
 	while (command[i] != '\0')
@@ -41,6 +41,7 @@ void rm_newline(char *line)
 /**
  * gettoken - delimiter and stores the tokens
  * @line: command line
+ * @cp_line: copy of command line
  * Return: pointer to the tokens
  */
 
@@ -77,7 +78,7 @@ void gettoken(char *line)
 
 	execute(argv);
 	i = 0;
-	while (argv[i])
+	while(argv[i])
 	{
 		free(argv[i]);
 		i++;
@@ -127,32 +128,29 @@ void handle_path(char *command, char *path)
 
 /**
  * execute - command ->
- * @arr: array of spilt commands
+ * @line: the command
  * Return: void
  */
 
 void execute(char **arr)
 {
 	int status;
-	char *path;
 	pid_t pid = fork();
 
 	if (pid == -1)
-	{
-		perror("fork");
 		exit(EXIT_FAILURE);
-	}
 	else if (pid == 0)
 	{
 
 		if (_strchr(arr[0], '/') == NULL)
 		{
 
-			path = _getenv("PATH");
+			char *path = _getenv("PATH");
 			handle_path(arr[0], path);
 		}
 		execve(arr[0], arr, NULL);
 		perror("execve");
+		exit(EXIT_FAILURE);
 	}
 	else
 	{
