@@ -14,10 +14,10 @@ int main(int argc, char **argv)
 	size_t n = 0;
 	int interactive_mode = isatty(STDIN_FILENO);
 	ssize_t read;
-	FILE *file;
 
-	if (argc == 2)
-		file = fopen(argv[1], "r");
+	(void)argc;
+	(void)argv;
+
 	while (1)
 	{
 		if (interactive_mode)
@@ -25,10 +25,10 @@ int main(int argc, char **argv)
 		read = getline(&line, &n, stdin);
 		if (read == -1 || is_empty(line))
 		{
-				/* Free allocated memory*/
-				free(line);
-				exit(0);
-			}
+			/* Free allocated memory*/
+			free(line);
+			exit(0);
+		}
 		/* Remove comments and newlines*/
 		rm_comment(line);
 		rm_newline(line);
@@ -41,4 +41,3 @@ int main(int argc, char **argv)
 	}
 	return (0);
 }
-
