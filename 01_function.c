@@ -152,8 +152,7 @@ void execute(char **arr)
 			handle_path(arr[0], path);
 		}
 		execve(arr[0], arr, NULL);
-		perror("execve");
-		exit(EXIT_FAILURE);
+		perror("./hsh");
 	}
 	else
 	{

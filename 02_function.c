@@ -4,11 +4,28 @@
 
 void is_exit(char *line)
 {
-	if(_strcmp(line, "exit"))
+	int state = 0, i = 5, sign = 1;
+	if(strncmp(line, "exit", 4) == 0)
 	{
+		while (line[i] != '\0')
+		{
+			if (line[i] == '-')
+				sign *= -1;
+			else if (line[i] >= '0' && line[i] <= '9')
+				state = state * 10 + line[i] - 48;
+			i++;
+
+		}
 		free(line);
-		exit (0);
+		exit (state * sign);
 	}
+	/*
+	   if(_strcmp(line, "exit") == 0)
+	   {
+	   free(line);
+	   exit (0);
+	   }
+	   */
 }
 /**
  * _getenv - get env
@@ -18,20 +35,20 @@ void is_exit(char *line)
 
 char *_getenv(char *name)
 {
-        size_t name_len = _strlen(name);
-        int i;
+	size_t name_len = _strlen(name);
+	int i;
 
-        for (i = 0; environ[i] != NULL; i++)
-        {
-                if (_strncmp(environ[i], name, name_len) == 0
-                                && environ[i][name_len] == '=')
-                {
-                        /* Return a pointer to the value part of the environment variable*/
-                        return (environ[i] + name_len + 1);
-                }
-        }
+	for (i = 0; environ[i] != NULL; i++)
+	{
+		if (_strncmp(environ[i], name, name_len) == 0
+				&& environ[i][name_len] == '=')
+		{
+			/* Return a pointer to the value part of the environment variable*/
+			return (environ[i] + name_len + 1);
+		}
+	}
 
-        return (NULL);
+	return (NULL);
 }
 
 /**
