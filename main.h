@@ -20,6 +20,8 @@ void gettoken(char *line);
 void handle_path(char *command, char *path);
 void execute(char **arr);
 /*02_functions */
+void read_file(char *fname);
+void is_exit(char *line);
 char *_getenv(char *name);
 int is_empty(const char *str);
 int _isspace(char c);
@@ -29,7 +31,5 @@ int _strcmp(char *s1, char *s2);
 int _strlen(char *s);
 char *_strcpy(char *dest, char *src);
 char *_strchr(char *s, char c);
-
-void is_exit(char *line);
 
 #endif

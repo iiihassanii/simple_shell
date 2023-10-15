@@ -144,14 +144,13 @@ void execute(char **arr)
 	}
 	else if (pid == 0)
 	{
-
 		if (_strchr(arr[0], '/') == NULL)
 		{
 
 			path = _getenv("PATH");
 			handle_path(arr[0], path);
 		}
-		execve(arr[0], arr, NULL);
+		execve(arr[0], arr, environ);
 		perror("./hsh");
 	}
 	else
