@@ -11,6 +11,7 @@ void read_file(char *fname)
 	char *line = NULL, *new_line = NULL;
 	size_t n = 0;
 	FILE *file = fopen(fname, "r");
+	int status;
 
 	if (file == NULL)
 	{
@@ -21,11 +22,11 @@ void read_file(char *fname)
 	{
 		rm_comment(line);
 		rm_newline(line);
-		is_exit(line);
+		is_exit(line, status);
 
 		new_line = malloc(_strlen(line) + 1);
 		_strcpy(new_line, line);
-		gettoken(new_line);
+		status = gettoken(new_line);
 	}
 	fclose(file);
 	free(new_line);
@@ -38,12 +39,17 @@ void read_file(char *fname)
  * Return: void
  */
 
-void is_exit(char *line)
+void is_exit(char *line, int status)
 {
 	int state = 0, i = 5, sign = 1;
 
 	if (strncmp(line, "exit", 4) == 0)
 	{
+		if (status >= 0)
+		{
+			free (line);
+			exit (status);
+		}
 		while (line[i] != '\0')
 		{
 			if (line[i] == '-')

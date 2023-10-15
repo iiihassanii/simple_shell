@@ -16,12 +16,12 @@ extern char **environ;
 /*01_functions */
 void rm_comment(char *command);
 void rm_newline(char *line);
-void gettoken(char *line);
+int gettoken(char *line);
 void handle_path(char *command, char *path);
-void execute(char **arr);
+int execute(char **arr);
 /*02_functions */
 void read_file(char *fname);
-void is_exit(char *line);
+void is_exit(char *line, int status);
 char *_getenv(char *name);
 int is_empty(const char *str);
 int _isspace(char c);

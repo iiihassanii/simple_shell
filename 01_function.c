@@ -44,10 +44,10 @@ void rm_newline(char *line)
  * Return: pointer to the tokens
  */
 
-void gettoken(char *line)
+int gettoken(char *line)
 {
 	char **argv = NULL, *token = NULL, *cp_line = NULL;
-	int tokens_counter = 0;
+	int tokens_counter = 0, status;
 	unsigned int i;
 	const char *delim = " \t\n";
 
@@ -75,7 +75,7 @@ void gettoken(char *line)
 	free(cp_line);
 	argv[i] = NULL;
 
-	execute(argv);
+	status = execute(argv);
 	i = 0;
 	while (argv[i])
 	{
@@ -83,6 +83,7 @@ void gettoken(char *line)
 		i++;
 	}
 	free(argv);
+	return (status);
 	/*last one is NULL why?execve need last one to be null*/
 }
 
@@ -131,7 +132,7 @@ void handle_path(char *command, char *path)
  * Return: void
  */
 
-void execute(char **arr)
+int execute(char **arr)
 {
 	int status;
 	char *path;
@@ -156,5 +157,7 @@ void execute(char **arr)
 	else
 	{
 		waitpid(pid, &status, 0);
+		status = WEXITSTATUS(status);
 	}
+	return (status);
 }
