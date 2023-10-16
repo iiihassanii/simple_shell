@@ -13,8 +13,8 @@ int main(int argc, char **argv)
 	char *line = NULL, *new_line = NULL;
 	size_t n = 0;
 	int interactive_mode = isatty(STDIN_FILENO);
-	int status = -1;
-	ssize_t read;
+	int status = 0;
+	ssize_t read_line;
 
 	if (argc == 2)
 		read_file(argv[1]);
@@ -23,27 +23,28 @@ int main(int argc, char **argv)
 		{
 			if (interactive_mode)
 				write(1, "$ ", 2);
-			read = getline(&line, &n, stdin);
-			if (read == -1 || is_empty(line))
+			read_line = getline(&line, &n, stdin);
+			if (read_line == -1 || is_empty(line))
 			{
 				/* Free allocated memory*/
 				free(line);
-				exit(0);
+				exit(status);
 			}
-			/* Remove comments and newlines*/
 			rm_comment(line);
 			rm_newline(line);
 			is_exit(line, status);
-
-			new_line = malloc(_strlen(line) + 1);
-			_strcpy(new_line, line);
-			if (is_empty(new_line))
+			if (is_env(line) != 1)
 			{
-				free(line);
-				free(new_line);
-				exit(0);
+				new_line = malloc(_strlen(line) + 1);
+				_strcpy(new_line, line);
+				if (is_empty(new_line))
+				{
+					free(line);
+					free(new_line);
+					exit(status);
+				}
+				status = gettoken(new_line);
 			}
-			status = gettoken(new_line);
 			free(new_line);
 		}
 	return (0);

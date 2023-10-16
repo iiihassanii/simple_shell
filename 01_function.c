@@ -1,7 +1,7 @@
 #include "main.h"
 
 /**
- * rm_comment - remove #
+ * rm_comment - remove the comments
  * @command: the line command
  * Return: void
  */
@@ -22,18 +22,18 @@ void rm_comment(char *command)
 }
 
 /**
- * rm_newline - remove \n
- * @line: the command line
+ * rm_newline - remove all \n
+ * @command: the command line
  * Return: void
  */
-void rm_newline(char *line)
+void rm_newline(char *command)
 {
 	int i = 0;
 
-	while (line[i] != '\0')
+	while (command[i] != '\0')
 	{
-		if (line[i] == '\n')
-			line[i] = '\0';
+		if (command[i] == '\n')
+			command[i] = '\0';
 		i++;
 	}
 }
@@ -73,6 +73,7 @@ int gettoken(char *line)
 		token = strtok(NULL, delim);
 	}
 	free(cp_line);
+	/*last one is NULL why?execve need last one to be null*/
 	argv[i] = NULL;
 
 	status = execute(argv);
@@ -84,7 +85,6 @@ int gettoken(char *line)
 	}
 	free(argv);
 	return (status);
-	/*last one is NULL why?execve need last one to be null*/
 }
 
 /**
