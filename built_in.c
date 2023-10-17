@@ -11,7 +11,7 @@ void is_exit(char *line, int status)
 {
 	int state = 0, i = 5, sign = 1;
 
-	if (strncmp(line, "exit", 4) == 0)
+	if (_strncmp(line, "exit", 4) == 0)
 	{
 		if (status > 0)
 		{
@@ -43,7 +43,7 @@ int is_env(char *line)
 {
 	int i = 0;
 
-	if (strncmp(line, "env", 3) == 0)
+	if (_strncmp(line, "env", 3) == 0)
 	{
 		for (i = 0; environ[i]; i++)
 		{
